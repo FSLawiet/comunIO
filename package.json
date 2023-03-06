@@ -15,7 +15,7 @@
     "build": "quasar build --modern",
     "tauri": "tauri",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook",
+    "build-storybook": "build-storybook -o docs-build",
     "predeploy": "npm run build-storybook",
     "deploy-storybook": "gh-pages -d storybook-static",
     "test:unit:ui": "vitest --ui",

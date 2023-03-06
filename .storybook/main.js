@@ -6,6 +6,7 @@ module.exports = {
     '@storybook/addon-docs',
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',
+    '@storybook/addon-postcss',
   ],
   framework: '@storybook/vue3',
   features: {

@@ -14,13 +14,18 @@ jobs:
           # this will use the latest Node 12 version
           node-version: 16.x
       # install dependencies using clean install to avoid package lock updates
-      - run: npm i
+      - run: |
+        npm i
+        npm run build-storybook
       # build the project if necessary
       - run: npm run build --if-present
       # finally run the tests
       - run: npm run test:unit:ci
-      # Deploy do Storybook
-      - name: Fazer Deploy do Storybook para o github Pages
-        run: npm run deploy-storybook
-        env:
-          GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: main # The branch the action should deploy to.
+          FOLDER: docs-build # The folder that the build-storybook script generates files.
+          CLEAN: true # Automatically remove deleted files from the deploy branch
+          TARGET_FOLDER: docs # The folder that we serve our Storybook files from

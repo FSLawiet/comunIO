@@ -135,6 +135,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { appWindow } from '@tauri-apps/api/window';
+import { invoke } from '@tauri-apps/api/tauri';
 import { useQuasar, LocalStorage } from 'quasar';
 
 const linksList = [
@@ -196,6 +197,8 @@ export default defineComponent({
   },
   mounted() {
     const $q = useQuasar();
+
+    invoke('close_splashscreen');
 
     if (
       LocalStorage.getItem('darkmode') ||

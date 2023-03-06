@@ -1,4 +1,4 @@
-![QA Tests](https://github.com/FSLawiet/comunIO/actions/workflows/testup.yml/badge.svg)
+![QA Tests](https://github.com/FSLawiet/comunIO/actions/workflows/test.yml/badge.svg)
 
 # Comun.IO (comun-io)
 

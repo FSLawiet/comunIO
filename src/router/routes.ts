@@ -4,9 +4,34 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
+    children: [
+      {
+        name: 'index',
+        path: '',
+        component: () => import('pages/IndexPage.vue'),
+      },
+      {
+        name: 'financeiro',
+        path: 'financeiro',
+        component: () => import('pages/FinanceiroPage.vue'),
+      },
+      {
+        name: 'receitas',
+        path: 'financeiro/receitas',
+        component: () => import('pages/ReceitasPage.vue'),
+      },
+      {
+        name: 'despesas',
+        path: 'financeiro/despesas',
+        component: () => import('pages/DespesasPage.vue'),
+      },
+      {
+        name: 'investimentos',
+        path: 'financeiro/investimentos',
+        component: () => import('pages/InvestimentosPage.vue'),
+      },
+    ],
   },
-
   // Always leave this as last one,
   // but you can also remove it
   {

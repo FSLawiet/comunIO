@@ -27,6 +27,8 @@
     "test:component:ci": "cross-env NODE_ENV=test cypress run --component"
   },
   "dependencies": {
+    "@mdx-js/rollup": "^2.3.0",
+    "@mdx-js/vue": "^2.3.0",
     "@quasar/extras": "^1.0.0",
     "@tauri-apps/api": "^1.2.0",
     "pinia": "^2.0.11",

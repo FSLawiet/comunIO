@@ -103,7 +103,7 @@
                   <q-item-section>Investimentos</q-item-section>
                 </q-item>
                 <q-separator />
-                <q-item clickable>
+                <q-item clickable :to="{ name: 'docs' }">
                   <q-item-section>Orçamentos</q-item-section>
                 </q-item>
               </q-list>

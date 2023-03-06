@@ -26,3 +26,4 @@ jobs:
       - run: npm run build --if-present
       # finally run the tests
       - run: npm run test:unit:ci
+      - run: npm run test:e2e:ci

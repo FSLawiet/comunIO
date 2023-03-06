@@ -19,3 +19,8 @@ jobs:
       - run: npm run build --if-present
       # finally run the tests
       - run: npm run test:unit:ci
+      # Deploy do Storybook
+      - name: Fazer Deploy do Storybook para o github Pages
+        run: npm run deploy-storybook -- --ci
+        env:
+          GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}

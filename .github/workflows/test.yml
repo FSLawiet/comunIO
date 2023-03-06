@@ -15,8 +15,8 @@ jobs:
           node-version: 16.x
       # install dependencies using clean install to avoid package lock updates
       - run: |
-        npm i
-        npm run build-storybook
+          npm i
+          npm run build-storybook
       # build the project if necessary
       - run: npm run build --if-present
       # finally run the tests

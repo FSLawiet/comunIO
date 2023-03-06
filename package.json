@@ -5,6 +5,7 @@
   "productName": "Comun.IO",
   "author": "Fausto André <fslawliet@gmail.com>",
   "private": true,
+  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.vue ./",
     "format": "prettier --write \"**/*.{js,ts,vue,css,html,md,json}\" --ignore-path .gitignore",

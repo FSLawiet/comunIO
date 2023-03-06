@@ -1,12 +1,14 @@
 <template>
-  <q-page class="column items-center justify-evenly">
-    <h3>Página Inicial</h3>
-    <ul>
-      <li v-for="(item, index) in fonteDestino" :key="index">
-        {{ item.nome }}
-      </li>
-    </ul>
-    <q-btn glossy label="Inicializar banco de dados" @click="initDatabase" />
+  <q-page class="column items-center justify-evenly bg-image">
+    <div class="page-content">
+      <h3>Página Inicial</h3>
+      <ul>
+        <li v-for="(item, index) in fonteDestino" :key="index">
+          {{ item.nome }}
+        </li>
+      </ul>
+      <q-btn glossy label="Inicializar banco de dados" @click="initDatabase" />
+    </div>
   </q-page>
 </template>
 
@@ -62,3 +64,25 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+.bg-image {
+  position: relative;
+}
+.bg-image:before {
+  content: ' ';
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  background-image: url('assets/bg.webp');
+  background-repeat: no-repeat;
+  background-position: 50% 0;
+  background-size: cover;
+}
+.page-content {
+  position: relative;
+}
+</style>

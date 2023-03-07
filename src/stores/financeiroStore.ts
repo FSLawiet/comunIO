@@ -39,6 +39,18 @@ export const financeiroStore = defineStore('storeFinanceiro', {
         console.log(error);
       }
     },
+    async fonteRendaById(id: number) {
+      try {
+        const db = await SQLite.open('../src/db/database.db');
+        const resp = await db.select<FontesRenda>(
+          `SELECT id, nome FROM fontes_renda WHERE id=${id};`
+        );
+        await db.close();
+        return resp;
+      } catch (error) {
+        console.log(error);
+      }
+    },
     async insertReceita(receita: Receita) {
       try {
         const db = await SQLite.open('../src/db/database.db');
@@ -48,6 +60,48 @@ export const financeiroStore = defineStore('storeFinanceiro', {
         await db.close();
         Notify.create({
           message: 'Receita cadastrada com sucesso!',
+          type: 'positive',
+          position: 'top',
+        });
+      } catch (error) {
+        console.log(error);
+        Notify.create({
+          message: `${error}`,
+          type: 'negative',
+          position: 'top',
+        });
+      }
+    },
+    async modificarReceita(
+      id: number,
+      payload: {
+        valor?: number;
+        data?: string;
+        origem?: number;
+        destino?: number;
+      }
+    ) {
+      try {
+        const db = await SQLite.open('../src/db/database.db');
+        if (payload.valor)
+          await db.execute(
+            `UPDATE receitas SET valor = ${payload.valor} WHERE id = ${id} `
+          );
+        else if (payload.data)
+          await db.execute(
+            `UPDATE receitas SET data = ${payload.data} WHERE id = ${id} `
+          );
+        else if (payload.origem)
+          await db.execute(
+            `UPDATE receitas SET origem = ${payload.origem} WHERE id = ${id} `
+          );
+        else if (payload.destino)
+          await db.execute(
+            `UPDATE receitas SET destino = ${payload.destino} WHERE id = ${id} `
+          );
+        await db.close();
+        Notify.create({
+          message: 'Receita alterado com sucesso!',
           type: 'positive',
           position: 'top',
         });

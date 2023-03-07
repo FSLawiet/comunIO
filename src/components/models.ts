@@ -19,3 +19,19 @@ export interface Receita {
   origem: number;
   destino: number;
 }
+
+export interface Despesa {
+  id?: number;
+  valor: number;
+  data: string;
+  fonte: number;
+  gasto: number;
+}
+
+export interface Investimento {
+  id?: number;
+  valor: number;
+  data: string;
+  fonte: number;
+  opcao: number;
+}

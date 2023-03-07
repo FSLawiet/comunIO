@@ -1,4 +1,4 @@
-import { FontesRenda, Receita } from 'components/models';
+import { FontesRenda, Receita, Despesa, Investimento } from 'components/models';
 import SQLite from 'tauri-plugin-sqlite-api';
 import { Notify } from 'quasar';
 import { defineStore } from 'pinia';
@@ -7,8 +7,8 @@ export const financeiroStore = defineStore('storeFinanceiro', {
   state: () => ({
     receitas: <Receita[]>[],
     fontesRenda: <FontesRenda[]>[],
-    despesas: [],
-    investimentos: [],
+    despesas: <Despesa[]>[],
+    investimentos: <Investimento[]>[],
   }),
   getters: {
     getReceitas: (state) => state.receitas,
@@ -33,6 +33,28 @@ export const financeiroStore = defineStore('storeFinanceiro', {
         const db = await SQLite.open('../src/db/database.db');
         this.fontesRenda = await db.select<Array<FontesRenda>>(
           'SELECT id, nome FROM fontes_renda;'
+        );
+        await db.close();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async listarDespesas() {
+      try {
+        const db = await SQLite.open('../src/db/database.db');
+        this.despesas = await db.select<Array<Despesa>>(
+          'SELECT id, valor, data, fonte, gasto FROM despesas;'
+        );
+        await db.close();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async listarInvestimentos() {
+      try {
+        const db = await SQLite.open('../src/db/database.db');
+        this.investimentos = await db.select<Array<Investimento>>(
+          'SELECT id, valor, data, fonte, opcao FROM investimentos;'
         );
         await db.close();
       } catch (error) {

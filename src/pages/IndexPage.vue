@@ -17,7 +17,7 @@ import { Todo, Meta } from 'components/models';
 import { defineComponent } from 'vue';
 import { coreStore } from 'stores/coreStore';
 
-const store = coreStore();
+const storeCore = coreStore();
 
 export default defineComponent({
   name: 'IndexPage',
@@ -50,16 +50,16 @@ export default defineComponent({
     return { todos, meta };
   },
   mounted() {
-    store.listarFonteDestino();
+    storeCore.listarFonteDestino();
   },
   methods: {
     async initDatabase() {
-      await store.init();
+      await storeCore.init();
     },
   },
   computed: {
     fonteDestino() {
-      return store.getFonteDestino;
+      return storeCore.getFonteDestino;
     },
   },
 });

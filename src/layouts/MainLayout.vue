@@ -22,6 +22,9 @@
             File
             <q-menu>
               <q-list dense style="min-width: 100px">
+                <q-item clickable v-close-popup :to="{ name: 'index' }">
+                  <q-item-section>Início</q-item-section>
+                </q-item>
                 <q-item clickable v-close-popup>
                   <q-item-section>Open...</q-item-section>
                 </q-item>

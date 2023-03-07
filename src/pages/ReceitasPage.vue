@@ -1,5 +1,110 @@
 <template>
   <q-page class="column items-center justify-evenly">
+    <q-dialog v-model="modalDisplay">
+      <div
+        class="modal_container"
+        :style="`background: ${$q.dark.isActive ? 'var(--q-dark)' : 'white'}; ${
+          $q.dark.isActive
+            ? 'box-shadow: 0 0 35px var(--q-primary); border: 2px solid var(--q-primary)'
+            : ''
+        }`"
+      >
+        <q-form @submit="onSubmit" @reset="onReset" class="formCliente">
+          <div class="fieldsets">
+            <fieldset>
+              <legend>Informações da Receita</legend>
+              <q-field
+                rounded
+                outlined
+                v-model="formData.valor"
+                label="Valor da Receita"
+                hint="Quantidade em Reais da entrada na receita"
+              >
+                <template
+                  v-slot:control="{ id, floatingLabel, modelValue, emitValue }"
+                >
+                  <input
+                    :id="id"
+                    class="q-field__input text-right"
+                    :value="modelValue"
+                    @change="(e) => emitValue(e.target.value)"
+                    v-money="moneyFormatForDirective"
+                    v-show="floatingLabel"
+                  />
+                </template>
+              </q-field>
+              <q-date
+                v-model="formData.data"
+                :locale="{
+                  days: [
+                    'Domingo',
+                    'Segunda',
+                    'Terça',
+                    'Quarta',
+                    'Quinta',
+                    'Sexta',
+                    'Sábado',
+                  ],
+                  daysShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+                  months: [
+                    'Janeiro',
+                    'Fevereiro',
+                    'Março',
+                    'Abril',
+                    'Maio',
+                    'Junho',
+                    'Julho',
+                    'Agosto',
+                    'Setembro',
+                    'Outubro',
+                    'Novembro',
+                    'Dezembro',
+                  ],
+                  monthsShort: [
+                    'Jan',
+                    'Fev',
+                    'Mar',
+                    'Abr',
+                    'Mai',
+                    'Jun',
+                    'Jul',
+                    'Ago',
+                    'Set',
+                    'Out',
+                    'Nov',
+                    'Dez',
+                  ],
+                }"
+                today-btn
+                mask="YYYY-MM-DD"
+              />
+              <q-select
+                filled
+                v-model="formData.origem"
+                :options="origens"
+                label="Origem de Renda"
+              />
+              <q-select
+                filled
+                v-model="formData.destino"
+                :options="destinos"
+                label="Destino de Renda"
+              />
+            </fieldset>
+          </div>
+          <div class="formButtons">
+            <q-btn label="Enviar" type="submit" color="primary" />
+            <q-btn
+              label="Limpar Campos"
+              type="reset"
+              color="primary"
+              flat
+              class="q-ml-sm"
+            />
+          </div>
+        </q-form>
+      </div>
+    </q-dialog>
     <div class="q-pa-md">
       <div class="ops">
         <q-btn
@@ -26,11 +131,13 @@
     </div>
   </q-page>
 </template>
-<script>
+<script lang="ts">
+import { Receita } from 'components/models';
 import { defineComponent } from 'vue';
 import { useQuasar } from 'quasar';
 import { coreStore } from 'stores/coreStore';
 import { financeiroStore } from 'stores/financeiroStore';
+import { VMoney } from 'v-money';
 
 const storeCore = coreStore();
 const storeFinanceiro = financeiroStore();
@@ -38,19 +145,26 @@ const $q = useQuasar();
 
 export default defineComponent({
   name: 'ReceitasPage',
+  directives: { money: VMoney },
   data() {
     return {
       modalDisplay: false,
-      pagination: { rowsPerPage: 50 },
-      selecao: [],
+      formData: {
+        valor: '',
+        data: '',
+        origem: null as { label: string; value: number } | null,
+        destino: null as { label: string; value: number } | null,
+      },
+      pagination: { rowsPerPage: 10 },
+      selecao: [] as Receita[],
       columns: [
         {
           name: 'id',
           required: true,
           label: 'ID',
-          align: 'left',
-          field: (row) => row.id,
-          format: (val) => `${val}`,
+          align: 'left' as 'left' | 'center' | 'right' | undefined,
+          field: (row: Receita) => row.id,
+          format: (val: number) => `${val}`,
           sortable: true,
         },
         {
@@ -58,39 +172,71 @@ export default defineComponent({
           align: 'center',
           label: 'Valor',
           field: 'valor',
+          format: (val: number) => `R$ ${val.toFixed(2)}`,
           sortable: true,
         },
         { name: 'data', label: 'Data', field: 'data', align: 'left' },
       ],
+      origens: [] as { label: string; value: number }[],
+      destinos: [] as { label: string; value: number }[],
+      moneyFormatForDirective: {
+        decimal: ',',
+        thousands: '.',
+        prefix: 'R$ ',
+        precision: 2,
+        masked: false,
+      },
     };
   },
   mounted() {
     storeFinanceiro.listarReceitas();
+    storeFinanceiro.listarFontesRenda().then(() => {
+      for (let origem of storeFinanceiro.getFontesRenda) {
+        this.origens.push({ label: origem.nome, value: origem.id });
+      }
+      storeCore.listarFonteDestino().then(() => {
+        for (let destino of storeCore.getFonteDestino) {
+          this.destinos.push({ label: destino.nome, value: destino.id });
+        }
+      });
+    });
   },
   methods: {
     modalToggle() {
       this.modalDisplay = !this.modalDisplay;
     },
-    /*
+    converteMoedaFloat(valor: string) {
+      let preco = 0;
+      if (valor !== '') {
+        valor = valor.split(' ')[1];
+        valor = valor.replace('.', '');
+        valor = valor.replace(',', '.');
+        preco = parseFloat(valor);
+      }
+      return preco;
+    },
     onReset() {
-      this.formData.r_social = '';
-      this.formData.n_fantasia = '';
-      this.formData.ddd = null;
-      this.formData.telefone = null;
-      this.formData.contato = '';
-      this.formData.cpf_cnpj = '';
-      this.formData.endereço = '';
-      this.formData.bairro = '';
-      this.formData.número = null;
-      this.formData.complemento = '';
-      this.formData.estado = '';
-      this.formData.cidade = '';
-      this.formData.cep = null;
+      this.formData.valor = '';
+      this.formData.data = '';
+      this.formData.origem = null;
+      this.formData.destino = null;
     },
     onSubmit() {
-      store.cadastrarCliente(this.formData);
-      store.pullLista();
+      const { valor, data, origem, destino } = this.formData;
+      const correctedValor = this.converteMoedaFloat(valor);
+      if (origem && destino) {
+        storeFinanceiro.insertReceita({
+          valor: correctedValor,
+          data,
+          origem: origem.value,
+          destino: destino.value,
+        });
+        storeFinanceiro.listarReceitas();
+        this.onReset();
+        this.modalToggle();
+      }
     },
+    /*
     onUpdateField(id: number, arg: object) {
       store.modificarCliente(id, arg);
       store.pullLista();
@@ -102,13 +248,15 @@ export default defineComponent({
         : `${this.selecao.length} receita${
             this.selecao.length > 1 ? 's' : ''
           } selecionada${this.selecao.length > 1 ? 's' : ''} de ${
-            this.clientes.length
+            this.receitas.length
           }`;
     },
     onDelete() {
-      for (let cliente of this.selecao) {
-        // store.deletarCliente(cliente.id);
-        // store.pullLista();
+      for (let receita of this.selecao) {
+        if (receita.id) {
+          storeFinanceiro.deletarReceita(receita.id);
+          storeFinanceiro.listarReceitas();
+        }
       }
     },
   },

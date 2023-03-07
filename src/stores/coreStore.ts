@@ -14,7 +14,7 @@ export const coreStore = defineStore('storeCore', {
   actions: {
     async init() {
       try {
-        const db = await SQLite.open('./database.db');
+        const db = await SQLite.open('../src/db/database.db');
         await db.execute(`
           CREATE TABLE fonte_destino (id INTEGER PRIMARY KEY, nome TEXT NOT NULL);
           INSERT INTO fonte_destino (nome) VALUES ('Banco do Brasil'), ('Itaú'), ('Nubank'), ('Dinheiro');
@@ -114,7 +114,7 @@ export const coreStore = defineStore('storeCore', {
       }
     },
     async listarFonteDestino() {
-      const db = await SQLite.open('./database.db');
+      const db = await SQLite.open('../src/db/database.db');
       this.listaFonteDestino = await db.select<
         Array<{ id: number; nome: string }>
       >('SELECT id, nome FROM fonte_destino;');

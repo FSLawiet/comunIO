@@ -14,6 +14,7 @@
     "dev": "quasar dev --modern",
     "dev:android": "quasar dev -m cordova -T android",
     "build": "quasar build --modern",
+    "build:android": "quasar build -m cordova -T android -- -- --packageType=apk",
     "tauri": "tauri",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -o docs-build",

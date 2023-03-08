@@ -1,6 +1,6 @@
 import { FontesRenda, Receita, Despesa, Investimento } from 'components/models';
 import SQLite from 'tauri-plugin-sqlite-api';
-import { Notify } from 'quasar';
+import { Notify, Platform } from 'quasar';
 import { defineStore } from 'pinia';
 
 export const financeiroStore = defineStore('storeFinanceiro', {
@@ -19,11 +19,28 @@ export const financeiroStore = defineStore('storeFinanceiro', {
   actions: {
     async listarReceitas() {
       try {
-        const db = await SQLite.open('../src/db/database.db');
-        this.receitas = await db.select<Array<Receita>>(
-          'SELECT id, valor, data, origem, destino FROM receitas;'
-        );
-        await db.close();
+        if (Platform.is.cordova) {
+          const db = window.sqlitePlugin.openDatabase({
+            name: 'database.db',
+            location: 'default',
+          });
+          db.transaction((tr) => {
+            tr.executeSql(
+              'SELECT id, valor, data, origem, destino FROM receitas;',
+              [],
+              (tr, rs) => {
+                console.log(rs.rows);
+                this.receitas = rs.rows;
+              }
+            );
+          });
+        } else {
+          const db = await SQLite.open('../src/db/database.db');
+          this.receitas = await db.select<Array<Receita>>(
+            'SELECT id, valor, data, origem, destino FROM receitas;'
+          );
+          await db.close();
+        }
       } catch (error) {
         console.log(error);
       }
@@ -41,22 +58,56 @@ export const financeiroStore = defineStore('storeFinanceiro', {
     },
     async listarDespesas() {
       try {
-        const db = await SQLite.open('../src/db/database.db');
-        this.despesas = await db.select<Array<Despesa>>(
-          'SELECT id, valor, data, fonte, gasto FROM despesas;'
-        );
-        await db.close();
+        if (Platform.is.cordova) {
+          const db = window.sqlitePlugin.openDatabase({
+            name: 'database.db',
+            location: 'default',
+          });
+          db.transaction((tr) => {
+            tr.executeSql(
+              'SELECT id, valor, data, fonte, gasto FROM despesas;',
+              [],
+              (tr, rs) => {
+                console.log(rs.rows);
+                this.despesas = rs.rows;
+              }
+            );
+          });
+        } else {
+          const db = await SQLite.open('../src/db/database.db');
+          this.despesas = await db.select<Array<Despesa>>(
+            'SELECT id, valor, data, fonte, gasto FROM despesas;'
+          );
+          await db.close();
+        }
       } catch (error) {
         console.log(error);
       }
     },
     async listarInvestimentos() {
       try {
-        const db = await SQLite.open('../src/db/database.db');
-        this.investimentos = await db.select<Array<Investimento>>(
-          'SELECT id, valor, data, fonte, opcao FROM investimentos;'
-        );
-        await db.close();
+        if (Platform.is.cordova) {
+          const db = window.sqlitePlugin.openDatabase({
+            name: 'database.db',
+            location: 'default',
+          });
+          db.transaction((tr) => {
+            tr.executeSql(
+              'SELECT id, valor, data, fonte, opcao FROM investimentos;',
+              [],
+              (tr, rs) => {
+                console.log(rs.rows);
+                this.investimentos = rs.rows;
+              }
+            );
+          });
+        } else {
+          const db = await SQLite.open('../src/db/database.db');
+          this.investimentos = await db.select<Array<Investimento>>(
+            'SELECT id, valor, data, fonte, opcao FROM investimentos;'
+          );
+          await db.close();
+        }
       } catch (error) {
         console.log(error);
       }

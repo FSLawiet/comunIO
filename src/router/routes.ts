@@ -1,9 +1,12 @@
 import { RouteRecordRaw } from 'vue-router';
+import { Platform } from 'quasar';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: Platform.is.cordova
+      ? () => import('layouts/CordovaLayout.vue')
+      : () => import('layouts/MainLayout.vue'),
     children: [
       {
         name: 'index',

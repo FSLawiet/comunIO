@@ -13,9 +13,9 @@
 
 
 
-import {Notify} from 'quasar'
+import {AddressbarColor,Notify} from 'quasar'
 
 
 
-export default { config: {"notify":{},"brand":{"primary":"#d10a0a","secondary":"#26A69A","accent":"#9C27B0","dark":"#1d1d1d","dark-page":"#121212","positive":"#21BA45","negative":"#C10015","info":"#31CCEC","warning":"#F2C037"}},plugins: {Notify} }
+export default { config: {"notify":{},"brand":{"primary":"#d10a0a","secondary":"#26A69A","accent":"#9C27B0","dark":"#1d1d1d","dark-page":"#121212","positive":"#21BA45","negative":"#C10015","info":"#31CCEC","warning":"#F2C037"}},plugins: {AddressbarColor,Notify} }
 

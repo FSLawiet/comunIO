@@ -44,12 +44,12 @@ import quasarUserOptions from './quasar-user-options.js'
 
 
 
-console.info('[Quasar] Running CORDOVA.')
+console.info('[Quasar] Running SPA.')
 
 
 
 
-const publicPath = ``
+const publicPath = `/`
 
 async function start ({
   app,
@@ -81,7 +81,7 @@ async function start ({
     // continue if we didn't fail to resolve the url
     if (href !== null) {
       window.location.href = href
-      window.location.reload()
+      
     }
   }
 
@@ -123,10 +123,7 @@ async function start ({
     
 
     
-      document.addEventListener('deviceready', () => {
-        app.config.globalProperties.$q.cordova = window.cordova
-        app.mount('#q-app')
-      }, false) // on deviceready
+      app.mount('#q-app')
     
 
     
@@ -156,6 +153,8 @@ createQuasarApp(createApp, quasarUserOptions)
       ]
 
     return Promise[ method ]([
+      
+      import('boot/addressbar-color'),
       
       import('boot/i18n')
       

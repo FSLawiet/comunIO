@@ -12,6 +12,7 @@
     "format": "prettier --write \"**/*.{js,ts,vue,css,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
     "dev": "quasar dev --modern",
+    "dev:ssr": "quasar dev -m ssr --modern",
     "dev:android": "quasar dev -m cordova -T android",
     "build": "quasar build --modern",
     "build:android": "quasar build -m cordova -T android -- -- --packageType=apk",

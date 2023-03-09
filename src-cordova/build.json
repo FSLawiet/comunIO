@@ -1,0 +1,14 @@
+{
+  "android": {
+    "debug": {
+      "keystore": "../apk/comunio.keystore",
+      "storePassword": "shipueru",
+      "alias": "Comun.IO"
+    },
+    "release": {
+      "keystore": "../apk/comunio.keystore",
+      "storePassword": "shipueru",
+      "alias": "Comun.IO"
+    }
+  }
+}

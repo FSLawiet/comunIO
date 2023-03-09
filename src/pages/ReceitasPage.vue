@@ -1,4 +1,5 @@
 <template>
+  <!-- Fingerprint? 34:3A:52:2C:19:BD:00:C7:A9:9C:7F:9F:92:95:6D:2F:06:F2:6D:E0:F2:AA:E2:1E:1F:48:EB:CE:3F:A7:14:17 -->
   <q-page class="column items-center justify-evenly">
     <q-dialog v-model="modalDisplay">
       <div

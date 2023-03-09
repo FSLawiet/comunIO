@@ -3,10 +3,11 @@ name: 'publish'
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   create-release:
+    name: Inicialização de Release
     permissions:
       contents: write
     runs-on: ubuntu-20.04
@@ -39,6 +40,7 @@ jobs:
 
   build-tauri:
     needs: create-release
+    name: Fazer o Build dos Aplicativo Nativos em Tauri
     permissions:
       contents: write
     strategy:
@@ -74,7 +76,11 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Instalação de Quasar, Cordova e repositórios
         run: |
           npm i -g @quasar/cli
@@ -103,6 +109,7 @@ jobs:
           asset_path: dist\cordova\android\apk\release\app-release-unsigned.apk
         # asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
   publish-release:
+    name: Publicação de Release
     permissions:
       contents: write
     runs-on: ubuntu-20.04

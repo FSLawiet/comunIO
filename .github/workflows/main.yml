@@ -12,8 +12,8 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     outputs:
-      release_id: ${{ steps.create-release.outputs.result.id }}
-      upload_url: ${{ steps.create-release.outputs.result.upload_url }}
+      release_id: ${{ steps.step-id.outputs.release_id }}
+      upload_url: ${{ steps.step-url.outputs.upload_url }}
     steps:
       - uses: actions/checkout@v3
       - name: setup node
@@ -36,8 +36,14 @@ jobs:
               draft: true,
               prerelease: false
             })
-            return { id: data.id, upload_url: data.upload_url }
-      - run: echo steps.create-release.outputs.result
+            core.exportVariable('RELEASE_ID', data.id);
+            core.exportVariable('RELEASE_UPLOAD_URL', data.upload_url);
+      - name: Set Release Id
+        id: step-id
+        run: echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
+      - name: Set Upload URL
+        id: step-url
+        run: echo "upload_url=$RELEASE_UPLOAD_URL" >> $GITHUB_OUTPUT
 
   build-tauri:
     needs: create-release

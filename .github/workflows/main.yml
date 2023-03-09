@@ -24,7 +24,7 @@ jobs:
         run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
       - name: create release
         id: create-release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             const { data } = await github.rest.repos.createRelease({
@@ -37,6 +37,8 @@ jobs:
               prerelease: false
             })
             return { id: data.id, upload_url: data.upload_url }
+      - run: 'echo ${{ steps.create-release.outputs.result.id }}'
+      - run: 'echo ${{ steps.create-release.outputs.result.upload_url }}'
 
   build-tauri:
     needs: create-release

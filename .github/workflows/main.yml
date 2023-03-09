@@ -76,8 +76,11 @@ jobs:
     name: Fazer o Build do Aplicativo em APK
     permissions:
       contents: write
+    strategy:
+      fail-fast: false
     runs-on: ubuntu-latest
     steps:
+      - run: echo ${{ needs.create-release.outputs.upload_url }}
       - uses: actions/checkout@v3
       - name: setup node
         uses: actions/setup-node@v3

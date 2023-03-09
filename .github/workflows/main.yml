@@ -84,6 +84,7 @@ jobs:
         run: quasar build -m cordova -T android -- -- --packageType=apk
       - name: Upload Release AAB
         id: upload-release-asset
+        run: echo ${{ steps.build-tauri.outputs.releaseUploadUrl }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

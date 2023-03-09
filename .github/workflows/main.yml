@@ -12,7 +12,8 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     outputs:
-      release_id: ${{ steps.create-release.outputs.result }}
+      release_id: ${{ steps.create-release.outputs.result.id }}
+      upload_url: ${{ steps.create-release.outputs.result.upload_url }}
     steps:
       - uses: actions/checkout@v3
       - name: setup node
@@ -35,7 +36,7 @@ jobs:
               draft: true,
               prerelease: false
             })
-            return data.id
+            return { id: data.id, upload_url: data.upload_url }
 
   build-tauri:
     needs: create-release
@@ -48,8 +49,6 @@ jobs:
         platform: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.platform }}
-    outputs:
-      upload_url: ${{ steps.tauri_build.outputs.releaseUploadUrl }}
     steps:
       - uses: actions/checkout@v3
       - name: setup node
@@ -73,7 +72,7 @@ jobs:
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
   build-apk:
-    needs: [create-release, build-tauri]
+    needs: create-release
     name: Fazer o Build do Aplicativo em APK
     permissions:
       contents: write
@@ -101,19 +100,13 @@ jobs:
       #     alias: ${{ secrets.ALIAS }}
       #     keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
       #     keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - run: echo ${{ steps.get_release.outputs.upload_url }}
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Release APK
         id: upload-release-asset
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: dist\cordova\android\apk\release\app-release-unsigned.apk
         # asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
   publish-release:

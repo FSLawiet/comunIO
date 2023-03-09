@@ -39,6 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build do Aplicativo
+        if: matrix.os == 'ubuntu-latest'
         run: quasar build -m cordova -T android -- -- --packageType=apk
       - uses: octokit/request-action@v2.x
         id: get_latest_release
@@ -51,7 +52,7 @@ jobs:
         id: get_upload_url
         run: >
           url=$(echo "$response" | jq -r ".[0].upload_url")
-          echo "::set-output name=url::$url"
+          echo "{name}={value}" >> $GITHUB_OUTPUT
         env:
           response: ${{ steps.get_latest_release.outputs.data }}
         shell: bash
@@ -69,30 +70,66 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: ./core/target/release/authme-lite-${{steps.version.outputs.prop}}-windows-x64-installer.msi
-          asset_name: authme-lite-${{steps.version.outputs.prop}}-windows-x64-installer.msi
+          asset_path: ./src-tauri/target/release/bundle/msi/comun-io_${{steps.version.outputs.prop}}_x64_en-US.msi
+          asset_name: comun-io_${{steps.version.outputs.prop}}_x64_en-US.msi
           asset_content_type: application/octet-stream
+
       # Linux
-      - name: Upload the linux installer asset
+      - name: Upload the Debian installer asset
         if: runner.os == 'Linux'
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: ./core/target/release/authme-lite-${{steps.version.outputs.prop}}-linux-x64-installer.appimage
-          asset_name: authme-lite-${{steps.version.outputs.prop}}-linux-x64-installer.appimage
+          asset_path: ./src-tauri/target/release/bundle/deb/comun-io_${{steps.version.outputs.prop}}_amd64.deb
+          asset_name: comun-io_${{steps.version.outputs.prop}}_amd64.deb
           asset_content_type: application/octet-stream
+
+      - name: Upload the AppImage installer asset
+        if: runner.os == 'Linux'
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: ./src-tauri/target/release/bundle/appimage/comun-io_${{steps.version.outputs.prop}}_amd64.AppImage
+          asset_name: comun-io_${{steps.version.outputs.prop}}_amd64.AppImage
+          asset_content_type: application/octet-stream
+
+      - name: Upload the APK
+        if: runner.os == 'Linux'
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: ./dist/cordova/android/apk/release/app-release-unsigned.apk
+          asset_name: comun-io_${{steps.version.outputs.prop}}.apk
+          asset_content_type: application/octet-stream
+
       # Mac
-      - name: Upload the mac installer asset
+
+      - name: Upload the mac DMG installer asset
         if: runner.os == 'macOS'
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{steps.get_upload_url.outputs.url}}
-          asset_path: ./core/target/release/authme-lite-${{steps.version.outputs.prop}}-mac-x64-installer.dmg
-          asset_name: authme-lite-${{steps.version.outputs.prop}}-mac-x64-installer.dmg
+          asset_path: ./src-tauri/target/release/bundle/macos/comun-io.app
+          asset_name: comun-io.app
+          asset_content_type: application/octet-stream
+
+      - name: Upload the mac DMG installer asset
+        if: runner.os == 'macOS'
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{steps.get_upload_url.outputs.url}}
+          asset_path: ./src-tauri/target/release/bundle/dmg/comun-io_${{steps.version.outputs.prop}}_x64.dmg
+          asset_name: comun-io_${{steps.version.outputs.prop}}_x64.dmg
           asset_content_type: application/octet-stream
       - name: Remove useless folders
         run: >

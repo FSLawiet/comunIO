@@ -101,14 +101,19 @@ jobs:
       #     alias: ${{ secrets.ALIAS }}
       #     keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
       #     keyPassword: ${{ secrets.KEY_PASSWORD }}
-      - run: echo ${{ needs.build-tauri.outputs.upload_url }}
+      - run: echo ${{ steps.get_release.outputs.upload_url }}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Release APK
         id: upload-release-asset
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.build-tauri.outputs.upload_url }}
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: dist\cordova\android\apk\release\app-release-unsigned.apk
         # asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
   publish-release:

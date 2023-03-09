@@ -37,8 +37,8 @@ jobs:
               prerelease: false
             })
             return { id: data.id, upload_url: data.upload_url }
-      - run: 'echo ${{ steps.create-release.outputs.result.id }}'
-      - run: 'echo ${{ steps.create-release.outputs.result.upload_url }}'
+      - run: echo "${{ steps.create-release.outputs.result.id }}"
+      - run: echo "${{ steps.create-release.outputs.result.upload_url }}"
 
   build-tauri:
     needs: create-release

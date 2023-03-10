@@ -1,4 +1,5 @@
 ![QA Tests](https://github.com/FSLawiet/comunIO/actions/workflows/test.yml/badge.svg)
+![Comun.IO Release](https://github.com/FSLawiet/comunIO/actions/workflows/main.yml/badge.svg)
 
 [Link Documentação Storybook](https://fslawiet.github.io/comunIO/)
 

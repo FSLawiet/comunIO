@@ -119,6 +119,7 @@ jobs:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: dist\cordova\android\apk\release\app-release-unsigned.apk
           asset_name: ComunIO.apk
+          asset_content_type: application/octet-stream
         # asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
   publish-release:
     name: Publicação de Release

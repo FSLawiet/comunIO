@@ -14,6 +14,7 @@ jobs:
     outputs:
       release_id: ${{ steps.step-id.outputs.release_id }}
       upload_url: ${{ steps.step-url.outputs.upload_url }}
+      version: ${{ steps.step-version.outputs.version }}
     steps:
       - uses: actions/checkout@v3
       - name: setup node
@@ -38,12 +39,16 @@ jobs:
             })
             core.exportVariable('RELEASE_ID', data.id);
             core.exportVariable('RELEASE_UPLOAD_URL', data.upload_url);
+            core.exportVariable('RELEASE_VERSION', process.env.PACKAGE_VERSION)
       - name: Set Release Id
         id: step-id
         run: echo "release_id=$RELEASE_ID" >> $GITHUB_OUTPUT
       - name: Set Upload URL
         id: step-url
         run: echo "upload_url=$RELEASE_UPLOAD_URL" >> $GITHUB_OUTPUT
+      - name: Set Version
+        id: step-version
+        run: echo "version=$RELEASE_VERSION" >> $GITHUB_OUTPUT
 
   build-tauri:
     needs: create-release
@@ -93,6 +98,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
       - name: Instalação de Quasar, Cordova e repositórios
         run: |
           npm i -g @quasar/cli
@@ -102,7 +109,7 @@ jobs:
         run: quasar build -m cordova -T android -- -- --packageType=apk
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
-      # ID used to access action output
+        # ID used to access action output
         id: sign_app
         with:
           releaseDirectory: ./src-cordova/platforms/android/app/build/outputs/apk/release
@@ -118,9 +125,8 @@ jobs:
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          asset_name: ComunIO.apk
+          asset_name: ComunIO_${process.env.PACKAGE_VERSION}.apk
           asset_content_type: application/octet-stream
-        # asset_path: 
   publish-release:
     name: Publicação de Release
     permissions:
@@ -129,6 +135,8 @@ jobs:
     needs: [create-release, build-tauri, build-apk]
 
     steps:
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
       - name: publish release
         id: publish-release
         uses: actions/github-script@v6
@@ -139,5 +147,6 @@ jobs:
             github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
+              tag_name: `app-v${process.env.PACKAGE_VERSION}`,
               release_id: process.env.release_id,
             })

@@ -135,6 +135,11 @@ jobs:
     needs: [create-release, build-tauri, build-apk]
 
     steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: publish release
         id: publish-release
         uses: actions/github-script@v6

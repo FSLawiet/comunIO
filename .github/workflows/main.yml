@@ -125,7 +125,7 @@ jobs:
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          asset_name: ComunIO-${{ process.env.PACKAGE_VERSION }}.apk
+          asset_name: ComunIO-${{ needs.create-release.outputs.version }}.apk
           asset_content_type: application/octet-stream
   publish-release:
     name: Publicação de Release
@@ -151,6 +151,6 @@ jobs:
             github.rest.repos.updateRelease({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              tag_name: `app-v${ process.env.PACKAGE_VERSION }`,
+              tag_name: `app-v${{ needs.create-release.outputs.version }}`,
               release_id: process.env.release_id,
             })

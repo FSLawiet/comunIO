@@ -6,6 +6,7 @@ docs-build
 .quasar
 /dist
 /apk
+/originals
 
 # Cordova related directories and files
 /src-cordova/node_modules
